@@ -1,0 +1,25 @@
+name: Run FeelingSurf Viewer
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Isse aap workflow ko manually bhi run kar sakte hain
+
+jobs:
+  run-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run FeelingSurf Viewer Docker Container
+        # 360 minutes (6 ghante) ka hard timeout lagaya hai
+        timeout-minutes: 360 
+        run: |
+          # 'timeout 5.9h' lagaya hai taake GitHub ke 6-hour limit se thoda pehle container safely band ho jaye
+          timeout 5.9h docker run \
+            -e access_token=${{ secrets.FEELINGSURF_ACCESS_TOKEN }} \
+            --tmpfs /tmp \
+            --tmpfs /dev/shm \
+            feelingsurf/viewer:stable
